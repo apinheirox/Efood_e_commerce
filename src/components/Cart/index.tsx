@@ -34,35 +34,21 @@ const Cart = () => {
       addContent: ''
     },
     validationSchema: Yup.object({
-      fullName: Yup.string()
-        .min(5, 'O nome precisa ter pelo menos 5 caracteres')
-        .required('O campo é obrigatório'),
-      adress: Yup.string().required('O campo é obrigatório'),
-      city: Yup.string().required('O campo é obrigatório'),
-      zipCode: Yup.string()
-        .length(9, 'O campo precisa ter exatamente 9 caracteres')
-        .required('O campo é obrigatório'),
-      number: Yup.string().required('O campo é obrigatório'),
-
-      nameCard: Yup.string()
-        .min(5, 'O nome precisa ter pelo menos 5 caracteres')
-        .required('O campo é obrigatório'),
-      cardNumber: Yup.string()
-        .length(19, 'O campo precisa ter exatamente 19 caracteres')
-        .required('O campo é obrigatório'),
-      cardCode: Yup.string()
-        .length(3, 'O campo precisa ter exatamente 3 caracteres')
-        .required('O campo é obrigatório'),
-      expiresMonth: Yup.string()
-        .length(2, 'O campo precisa ter exatamente 2 caracteres')
-        .required('O campo é obrigatório'),
-      expiresYear: Yup.string()
-        .length(2, 'O campo precisa ter exatamente 2 caracteres')
-        .required('O campo é obrigatório')
+      // Seu esquema de validação...
     }),
     onSubmit: (values, { setSubmitting }) => {
-      if (form.isValidating) {
-        // Evitar envio quando ainda estiver validando
+      if (!formClicked || !form.isValid) { // Verifica se o usuário interagiu com o formulário e se ele é válido
+        return
+      }
+
+      purchase({
+        // Seu código de envio de dados...
+      })
+      setOrderPlaced(true)
+      setSubmitting(false)
+    }
+  })
+
         return
       }
 
