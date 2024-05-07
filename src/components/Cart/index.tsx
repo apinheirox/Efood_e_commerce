@@ -1,23 +1,17 @@
 import { useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
-import InputMask from 'react-input-mask'
-
 import Button from '../Button'
 import * as S from './styles'
-
 import { usePurchaseMutation } from '../../services/api'
-import { RootReducer } from '../../store'
-import { closeCart, removeToCart, clearCart } from '../../store/reducers/cart'
+import { closeCart } from '../../store/reducers/cart'
 import { parseToBrl } from '../../utils/index'
 
 const Cart = () => {
-  const [delivery, setDelivery] = useState(false)
-  const [payment, setPayment] = useState(false)
-  const [orderPlaced, setOrderPlaced] = useState(false)
+  const [formTouched, setFormTouched] = useState(false)
   const dispatch = useDispatch()
-  const [purchase, { data, isLoading }] = usePurchaseMutation()
+  const [purchase, { isLoading }] = usePurchaseMutation()
 
   const form = useFormik({
     initialValues: {
@@ -27,27 +21,63 @@ const Cart = () => {
       expiresMonth: '',
       expiresYear: '',
       fullName: '',
-      adress: '',
+      address: '',
       city: '',
       zipCode: '',
       number: '',
       addContent: ''
     },
     validationSchema: Yup.object({
-      // Seu esquema de validação...
+      fullName: Yup.string()
+        .min(5, 'O nome precisa ter pelo menos 5 caracteres')
+        .required('O campo é obrigatório'),
+      address: Yup.string().required('O campo é obrigatório'),
+      city: Yup.string().required('O campo é obrigatório'),
+      zipCode: Yup.string()
+        .length(9, 'O campo precisa ter exatamente 9 caracteres')
+        .required('O campo é obrigatório'),
+      number: Yup.string().required('O campo é obrigatório'),
+
+      nameCard: Yup.string()
+        .min(5, 'O nome precisa ter pelo menos 5 caracteres')
+        .required('O campo é obrigatório'),
+      cardNumber: Yup.string()
+        .length(19, 'O campo precisa ter exatamente 19 caracteres')
+        .required('O campo é obrigatório'),
+      cardCode: Yup.string()
+        .length(3, 'O campo precisa ter exatamente 3 caracteres')
+        .required('O campo é obrigatório'),
+      expiresMonth: Yup.string()
+        .length(2, 'O campo precisa ter exatamente 2 caracteres')
+        .required('O campo é obrigatório'),
+      expiresYear: Yup.string()
+        .length(2, 'O campo precisa ter exatamente 2 caracteres')
+        .required('O campo é obrigatório')
     }),
     onSubmit: (values, { setSubmitting }) => {
-      if (!formClicked || !form.isValid) { // Verifica se o usuário interagiu com o formulário e se ele é válido
-        return
+      if (form.isValid && formTouched) {
+        purchase(values)
       }
-
-      purchase({
-        // Seu código de envio de dados...
-      })
-      setOrderPlaced(true)
       setSubmitting(false)
     }
   })
+
+  const handleFormTouched = () => {
+    setFormTouched(true)
+  }
+
+  return (
+    <S.FormWrapper>
+      <S.Form onSubmit={form.handleSubmit} onClick={handleFormTouched}>
+        {/* Seus campos de formulário */}
+        <Button type="submit">Enviar</Button>
+      </S.Form>
+    </S.FormWrapper>
+  )
+}
+
+export default Cart
+
 
         return
       }
